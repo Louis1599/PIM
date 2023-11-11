@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-// Estrutura de usu·rio
+// Estrutura de usu√°rio
 struct User {
     char username[50];
     char password[50];
@@ -12,46 +12,67 @@ struct User {
     int checkOutDay; // Dia de check-out.
 };
 
-// FunÁ„o para registrar um novo usu·rio
+//Estrutura de funcion√°rio
+struct Funcionario {
+    char username[50];
+    char password[50];
+    char admin[5];
+};
+
+// Fun√ß√£o para registrar um novo usu√°rio
 void registerUser(struct User users[], int *userCount) {
-    printf("Digite um nome de usu·rio: ");
+    printf("Digite um nome de usu√°rio: ");
     scanf("%s", users[*userCount].username);
     printf("Digite um numero de celular: ");
     scanf("%s", users[*userCount].cell);
     printf("Digite uma senha: ");
     scanf("%s", users[*userCount].password);
-    users[*userCount].roomType = 0; // Inicializa o tipo de quarto como 0 (n„o reservado).
+    users[*userCount].roomType = 0; // Inicializa o tipo de quarto como 0 (n√£o reservado).
     (*userCount)++;
-    printf("Usu·rio registrado com sucesso!\n");
+    printf("Usu√°rio registrado com sucesso!\n");
 }
 
-// FunÁ„o para fazer login
+// Fun√ß√£o para fazer login
 int loginUser(struct User users[], int userCount, char username[], char cell[], char password[]) {
     for (int i = 0; i < userCount; i++) {
         if (strcmp(users[i].username, username) == 0 && strcmp(users[i].cell, cell) == 0 && strcmp(users[i].password, password) == 0) {
-            return i; // Retorna o Ìndice do usu·rio logado.
+            return i; // Retorna o √≠ndice do usu√°rio logado.
+        }
+    }
+    return -1; // Login falhou
+}
+
+//Fun√ß√£o para fazer login de funcion√°rio
+int loginEmployer(struct Funcionario funcionarios[], int userCount, char username[], char password[]) {
+
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(funcionarios[i].username, username) == 0 && strcmp(funcionarios[i].password, password) == 0) {
+            return i; // Retorna o √≠ndice do usu√°rio logado.
         }
     }
     return -1; // Login falhou
 }
 
 int main() {
-    struct User users[10]; // Limite de 10 usu·rios
+    struct User users[10]; // Limite de 10 usu√°rios
+    struct Funcionario funcionario[1];
     int userCount = 0;
-    int loggedInUserIndex = -1; // Õndice do usu·rio logado, inicializado como -1 (n„o logado).
+    int loggedInUserIndex = -1; // √çndice do usu√°rio logado, inicializado como -1 (n√£o logado).
+    int loggedInEmployerIndex = -1;
     int choice;
 
     do {
         printf("\nMenu de Hospedagem de Hotel\n");
         printf("1. Registrar\n");
         printf("2. Fazer login\n");
-        printf("3. Sair\n");
+        printf("3. Fazer login como funcionario\n");
+        printf("4. Sair\n");
 
         if (loggedInUserIndex != -1) {
             printf("4. Gerenciar Reserva\n");
         }
 
-        printf("Escolha uma opÁ„o: ");
+        printf("Escolha uma op√ß√£o: ");
         scanf("%d", &choice);
 
         switch (choice) {
@@ -59,7 +80,7 @@ int main() {
                 registerUser(users, &userCount);
                 break;
             case 2:
-                printf("Digite seu nome de usu·rio: ");
+                printf("Digite seu nome de usu√°rio: ");
                 char username[50];
                 scanf("%s", username);
                 printf("Digite seu numero de celular: ");
@@ -75,7 +96,7 @@ int main() {
                     int escolha, escolha2;
     double preco;
     int dia;
-    int quarto_ocupado[3][31] = {0}; // Array bidimensional para verificar a ocupaÁ„o de cada quarto em cada dia.
+    int quarto_ocupado[3][31] = {0}; // Array bidimensional para verificar a ocupa√ß√£o de cada quarto em cada dia.
     char continuar, continuar2;
     int dia_entrada, dia_saida;
 
@@ -98,20 +119,20 @@ int main() {
                 preco = 300.0;
                 break;
             default:
-                printf("Escolha inv·lida.\n");
-                return 1; // Sai do programa com cÛdigo de erro.
+                printf("Escolha inv√°lida.\n");
+                return 1; // Sai do programa com c√≥digo de erro.
         }
 
-        printf("VocÍ escolheu o Quarto %d. Deseja escolher algum serviÁo extra? (S/N):\n", escolha);
+        printf("Voc√™ escolheu o Quarto %d. Deseja escolher algum servi√ßo extra? (S/N):\n", escolha);
         scanf(" %c", &continuar);
 
         if (continuar == 'S' || continuar == 's') {
             int escolha2;
             do {
-                printf("Menu de serviÁos extras\n");
+                printf("Menu de servi√ßos extras\n");
                 printf("1. Acesso ao frigobar - R$25\n");
-                printf("2. CafÈ da manh„ - R$25\n");
-                printf("3. AlmoÁo no local - R$50\n");
+                printf("2. Caf√© da manh√£ - R$25\n");
+                printf("3. Almo√ßo no local - R$50\n");
                 scanf("%d", &escolha2);
 
                 switch (escolha2) {
@@ -125,37 +146,37 @@ int main() {
                         preco = preco + 50;
                         break;
                     default:
-                        printf("Escolha inv·lida.\n");
-                        return 1; // Sai do programa com cÛdigo de erro.
+                        printf("Escolha inv√°lida.\n");
+                        return 1; // Sai do programa com c√≥digo de erro.
                 }
             } while (escolha2 < 1 || escolha2 > 3);
         }
-        printf("O preÁo por noite È R$%.2lf\n", preco);
+        printf("O pre√ßo por noite √© R$%.2lf\n", preco);
         printf("Digite o dia de entrada (1-31): ");
         scanf("%d", &dia_entrada);
 
-                printf("Digite o dia de saÌda: ");
+                printf("Digite o dia de sa√≠da: ");
                 scanf("%d", &dia_saida);
                 dia = dia_saida - dia_entrada;
 
-                // Verifica se o quarto j· est· ocupado nos dias escolhidos.
+                // Verifica se o quarto j√° est√° ocupado nos dias escolhidos.
                 if (dia < 1 || dia > 31) {
-                    printf("Dia de agendamento inv·lido.\n");
+                    printf("Dia de agendamento inv√°lido.\n");
                 } else {
-                    int quarto = escolha - 1; // Subtrai 1 para mapear 1, 2 e 3 para os Ìndices 0, 1 e 2.
+                    int quarto = escolha - 1; // Subtrai 1 para mapear 1, 2 e 3 para os √≠ndices 0, 1 e 2.
                     int dia_atual;
                     for (dia_atual = dia_entrada; dia_atual <= dia_saida; dia_atual++) {
                         if (quarto_ocupado[quarto][dia_atual - 1]) {
-                            printf("Desculpe, o Quarto %d j· est· ocupado no dia %d.\n", escolha, dia_atual);
+                            printf("Desculpe, o Quarto %d j√° est√° ocupado no dia %d.\n", escolha, dia_atual);
                             break;
                         } else {
                             quarto_ocupado[quarto][dia_atual - 1] = 1; // Marca o quarto como ocupado para o dia atual.
                         }
                     }
                     if (dia_atual > dia_saida) {
-                        printf("Quarto agendado do dia %d atÈ o dia %d. O custo total È R$%.2lf\n", dia_entrada, dia_saida, preco * dia);
+                        printf("Quarto agendado do dia %d at√© o dia %d. O custo total √© R$%.2lf\n", dia_entrada, dia_saida, preco * dia);
 
-                        // Atualiza os dados de reserva do usu·rio logado
+                        // Atualiza os dados de reserva do usu√°rio logado
                         users[loggedInUserIndex].roomType = escolha;
                         users[loggedInUserIndex].checkInDay = dia_entrada;
                         users[loggedInUserIndex].checkOutDay = dia_saida;
@@ -168,29 +189,48 @@ int main() {
             } while (continuar2 == 'S' || continuar2 == 's');
 
         } else {
-            printf("Login falhou. Verifique seu nome de usu·rio e senha.\n");
+            printf("Login falhou. Verifique seu nome de usu√°rio e senha.\n");
         }
                 break;
             case 3:
-                printf("Saindo...\n");
+                printf("Digite seu usu√°rio: ");
+                char userEmployer[50];
+                scanf("%s", userEmployer);
+                printf("Digite sua senha: ");
+                char passwordEmployer[50];
+                scanf("%s", passwordEmployer);
+                char Admin[]  = "Admin" ;
+                loggedInEmployerIndex = loginEmployer(funcionario, userCount, username, password);
+
+                if (loggedInEmployerIndex != -1){
+                    printf("Login bem sucedido\n");
+                }
+                else{
+                    printf("Login falhou. Verifique seu usuario e senha. \n");
+                    break;
+                }
                 break;
             case 4:
-                if (loggedInUserIndex != -1) {
+                printf("Saindo...\n");
+                return 0;
+                break;
+            case 5:
+                if (loggedInUserIndex != -1 || loggedInEmployerIndex != -1) {
                     struct User *currentUser = &users[loggedInUserIndex];
-                    printf("OpÁ„o de gerenciamento de reserva selecionada.\n");
+                    printf("Op√ß√£o de gerenciamento de reserva selecionada.\n");
 
-                    // Mostra a reserva atual do usu·rio
+                    // Mostra a reserva atual do usu√°rio
                     printf("Sua reserva atual:\n");
                     printf("Tipo de quarto: %d\n", currentUser->roomType);
                     printf("Check-in: Dia %d\n", currentUser->checkInDay);
                     printf("Check-out: Dia %d\n", currentUser->checkOutDay);
 
-                    // OpÁıes de gerenciamento
+                    // Op√ß√µes de gerenciamento
                     printf("1. Modificar datas de reserva\n");
                     printf("2. Modificar tipo de quarto\n");
                     printf("3. Cancelar reserva\n");
                     printf("4. Voltar\n");
-                    printf("Escolha uma opÁ„o: ");
+                    printf("Escolha uma op√ß√£o: ");
                     int manageChoice;
                     scanf("%d", &manageChoice);
 
@@ -203,13 +243,13 @@ int main() {
                             int newCheckOut;
                             scanf("%d", &newCheckOut);
 
-                            // Verifica se as novas datas s„o v·lidas
+                            // Verifica se as novas datas s√£o v√°lidas
                             if (newCheckIn >= 1 && newCheckIn <= 31 && newCheckOut > newCheckIn && newCheckOut <= 31) {
                                 currentUser->checkInDay = newCheckIn;
                                 currentUser->checkOutDay = newCheckOut;
                                 printf("Datas de reserva modificadas com sucesso.\n");
                             } else {
-                                printf("Datas de reserva inv·lidas. N„o foram feitas alteraÁıes.\n");
+                                printf("Datas de reserva inv√°lidas. N√£o foram feitas altera√ß√µes.\n");
                             }
                             break;
                         case 2:
@@ -217,12 +257,12 @@ int main() {
                             int newRoomType;
                             scanf("%d", &newRoomType);
 
-                            // Verifica se o novo tipo de quarto È v·lido
+                            // Verifica se o novo tipo de quarto √© v√°lido
                             if (newRoomType >= 1 && newRoomType <= 3) {
                                 currentUser->roomType = newRoomType;
                                 printf("Tipo de quarto modificado com sucesso.\n");
                             } else {
-                                printf("Tipo de quarto inv·lido. N„o foi feita nenhuma alteraÁ„o.\n");
+                                printf("Tipo de quarto inv√°lido. N√£o foi feita nenhuma altera√ß√£o.\n");
                             }
                             break;
                         case 3:
@@ -235,14 +275,14 @@ int main() {
                         case 4:
                             break; // Volta ao menu principal de gerenciamento
                         default:
-                            printf("OpÁ„o inv·lida. Tente novamente.\n");
+                            printf("Op√ß√£o inv√°lida. Tente novamente.\n");
                     }
                 } else {
-                    printf("VocÍ precisa fazer login para gerenciar sua reserva.\n");
+                    printf("Voc√™ precisa fazer login para gerenciar sua reserva.\n");
                 }
                 break;
             default:
-                printf("OpÁ„o inv·lida. Tente novamente.\n");
+                printf("Op√ß√£o inv√°lida. Tente novamente.\n");
         }
     } while (choice != 3);
 
