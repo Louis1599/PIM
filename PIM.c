@@ -10,6 +10,7 @@ struct User {
     int roomType;   // Adiciona um campo para armazenar o tipo de quarto reservado (1, 2 ou 3).
     int checkInDay; // Dia de check-in.
     int checkOutDay; // Dia de check-out.
+    double price;
 };
 
 //Estrutura de funcionário
@@ -33,7 +34,7 @@ void registerUser(struct User users[], int *userCount) {
 }
 
 // Função para fazer login
-int loginUser(struct User users[], int userCount, char username[], char cell[], char password[]) {
+int loginUser(struct User users[], int userCount, char username[], char cell[], char password[], double price) {
     for (int i = 0; i < userCount; i++) {
         if (strcmp(users[i].username, username) == 0 && strcmp(users[i].cell, cell) == 0 && strcmp(users[i].password, password) == 0) {
             return i; // Retorna o índice do usuário logado.
@@ -58,6 +59,7 @@ int main() {
     int loggedInUserIndex = -1; // Índice do usuário logado, inicializado como -1 (não logado).
     int loggedInEmployerIndex = -1;
     int choice;
+    double price = 0;
 
     do {
         printf("\nMenu de Hospedagem de Hotel\n");
@@ -66,11 +68,8 @@ int main() {
         printf("3. Fazer login como funcionario\n");
         printf("4. Sair\n");
 
-        if (loggedInUserIndex != -1) {
+        if (loggedInUserIndex != -1 || loggedInEmployerIndex != -1) {
             printf("5. Gerenciar Reserva\n");
-        }
-        if (loggedInEmployerIndex != -1){
-            printf("6. Gerenciar Reserva dos hóspedes\n");
         }
 
         printf("Escolha uma opção: ");
@@ -90,12 +89,13 @@ int main() {
                 printf("Digite sua senha: ");
                 char password[50];
                 scanf("%s", password);
-                loggedInUserIndex = loginUser(users, userCount, username, cell, password);
+                loggedInUserIndex = loginUser(users, userCount, username, cell, password, price);
 
                 if (loggedInUserIndex != -1) {
                     printf("\nLogin bem-sucedido!\n\n");
                     int escolha, escolha2;
                     double preco;
+                    double precoTotal;
                     int dia;
                     int quarto_ocupado[3][31] = {0}; // Array bidimensional para verificar a ocupação de cada quarto em cada dia.
                     char continuar, continuar2;
@@ -175,12 +175,13 @@ int main() {
                                 }
                             }
                             if (dia_atual > dia_saida) {
+                                precoTotal = preco * dia;
                                 printf("Quarto agendado do dia %d até o dia %d. O custo total é R$%.2lf\n", dia_entrada, dia_saida, preco * dia);
-
                                 // Atualiza os dados de reserva do usuário logado
                                 users[loggedInUserIndex].roomType = escolha;
                                 users[loggedInUserIndex].checkInDay = dia_entrada;
                                 users[loggedInUserIndex].checkOutDay = dia_saida;
+                                users[loggedInUserIndex].price = precoTotal;
                             }
                         }
 
@@ -204,81 +205,10 @@ int main() {
                 loggedInEmployerIndex = loginEmployer(funcionario, userEmployer, passwordEmployer);
 
                 if (loggedInEmployerIndex != -1){
-                    printf("\nLogin bem sucedido\n\n");
-
-                case 6:
-                if (loggedInEmployerIndex != -1){
-                    struct User *currentUser = &users[loggedInUserIndex];
-                    printf("Opção de gerenciamento de reserva selecionada.\n");
-
-                    // Mostra a reserva atual do usuário
-                    printf("Sua reserva atual:\n");
-                    printf("Tipo de quarto: %d\n", currentUser->roomType);
-                    printf("Check-in: Dia %d\n", currentUser->checkInDay);
-                    printf("Check-out: Dia %d\n", currentUser->checkOutDay);
-
-                    // Opções de gerenciamento
-                    printf("1. Modificar datas de reserva\n");
-                    printf("2. Modificar tipo de quarto\n");
-                    printf("3. Cancelar reserva\n");
-                    printf("4. Voltar\n");
-                    printf("Escolha uma opção: ");
-                    int manageChoice;
-                    scanf("%d", &manageChoice);
-
-                    switch (manageChoice) {
-                        case 1:
-                            printf("Digite a nova data de check-in (1-31): ");
-                            int newCheckIn;
-                            scanf("%d", &newCheckIn);
-                            printf("Digite a nova data de check-out: ");
-                            int newCheckOut;
-                            scanf("%d", &newCheckOut);
-
-                            // Verifica se as novas datas são válidas
-                            if (newCheckIn >= 1 && newCheckIn <= 31 && newCheckOut > newCheckIn && newCheckOut <= 31) {
-                                currentUser->checkInDay = newCheckIn;
-                                currentUser->checkOutDay = newCheckOut;
-                                printf("Datas de reserva modificadas com sucesso.\n");
-                            } else {
-                                printf("Datas de reserva inválidas. Não foram feitas alterações.\n");
-                            }
-                            break;
-                        case 2:
-                            printf("Digite o novo tipo de quarto (1, 2, ou 3): ");
-                            int newRoomType;
-                            scanf("%d", &newRoomType);
-
-                            // Verifica se o novo tipo de quarto é válido
-                            if (newRoomType >= 1 && newRoomType <= 3) {
-                                currentUser->roomType = newRoomType;
-                                printf("Tipo de quarto modificado com sucesso.\n");
-                            } else {
-                                printf("Tipo de quarto inválido. Não foi feita nenhuma alteração.\n");
-                            }
-                            break;
-                        case 3:
-                            // Cancela a reserva
-                            currentUser->roomType = 0;
-                            currentUser->checkInDay = 0;
-                            currentUser->checkOutDay = 0;
-                            printf("Reserva cancelada com sucesso.\n");
-                            break;
-                        case 4:
-                            break; // Volta ao menu principal de gerenciamento
-                            break;
-                        default:
-                            printf("Opção inválida. Tente novamente.\n");
-                    }
-                }
-                else {
-                    printf("Você precisa fazer login para gerenciar sua reserva.\n");
-                }
-                break;
+                    printf("Login bem sucedido\n");
                 }
                 else{
                     printf("Login falhou. Verifique seu usuario e senha. \n");
-                    return -1;
                     break;
                 }
                 break;
@@ -287,7 +217,7 @@ int main() {
                 return 0;
                 break;
             case 5:
-                if (loggedInUserIndex != -1) {
+                if (loggedInUserIndex != -1 || loggedInEmployerIndex != -1) {
                     struct User *currentUser = &users[loggedInUserIndex];
                     printf("Opção de gerenciamento de reserva selecionada.\n");
 
@@ -296,6 +226,7 @@ int main() {
                     printf("Tipo de quarto: %d\n", currentUser->roomType);
                     printf("Check-in: Dia %d\n", currentUser->checkInDay);
                     printf("Check-out: Dia %d\n", currentUser->checkOutDay);
+                    printf("Valor total: R$%.2lf\n\n", currentUser->price);
 
                     // Opções de gerenciamento
                     printf("1. Modificar datas de reserva\n");
@@ -342,6 +273,7 @@ int main() {
                             currentUser->roomType = 0;
                             currentUser->checkInDay = 0;
                             currentUser->checkOutDay = 0;
+                            currentUser->price = 0;
                             printf("Reserva cancelada com sucesso.\n");
                             break;
                         case 4:
@@ -353,11 +285,10 @@ int main() {
                     printf("Você precisa fazer login para gerenciar sua reserva.\n");
                 }
                 break;
-
             default:
                 printf("Opção inválida. Tente novamente.\n");
         }
-    } while (choice != 3);
+    } while (choice != 3 || choice != 4);
 
     // Final do programa
 
